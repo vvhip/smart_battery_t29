@@ -37,15 +37,15 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING, OCTETS
  16 .debug_macro  0001715f  00000000  00000000  00011353  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 17 .debug_line   0000a59b  00000000  00000000  000284b2  2**0
+ 17 .debug_line   0000a584  00000000  00000000  000284b2  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 18 .debug_str    000846c0  00000000  00000000  00032a4d  2**0
+ 18 .debug_str    000846c0  00000000  00000000  00032a36  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 19 .comment      00000043  00000000  00000000  000b710d  2**0
+ 19 .comment      00000043  00000000  00000000  000b70f6  2**0
                   CONTENTS, READONLY
- 20 .debug_frame  0000259c  00000000  00000000  000b7150  2**2
+ 20 .debug_frame  0000259c  00000000  00000000  000b713c  2**2
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 21 .debug_line_str 0000004e  00000000  00000000  000b96ec  2**0
+ 21 .debug_line_str 0000004e  00000000  00000000  000b96d8  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
 
 Disassembly of section .text:
@@ -1203,34 +1203,34 @@ int main(void)
   /* MCU Configuration--------------------------------------------------------*/
 
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
-  HAL_Init();
+  HAL_Init(); // Khởi tạo HAL Library, reset tất cả các thiết bị ngoại vi và cấu hình hệ thống Systick.
  8000e5e:	f000 fc61 	bl	8001724 <HAL_Init>
   /* USER CODE BEGIN Init */
-
+  // Khởi tạo các thành phần cần thiết trước khi hệ thống chính bắt đầu.
   /* USER CODE END Init */
 
   /* Configure the system clock */
-  SystemClock_Config();
+  SystemClock_Config(); // Cấu hình clock của hệ thống.
  8000e62:	f000 f9b5 	bl	80011d0 <SystemClock_Config>
   /* USER CODE BEGIN SysInit */
-
+  // Khởi tạo các thành phần của hệ thống mà cần thiết trước khi các thiết bị ngoại vi được khởi tạo.
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
-  MX_GPIO_Init();
+  MX_GPIO_Init(); // Khởi tạo các chân GPIO.
  8000e66:	f000 faa9 	bl	80013bc <MX_GPIO_Init>
-  MX_ADC1_Init();
+  MX_ADC1_Init(); // Khởi tạo ADC1.
  8000e6a:	f000 fa01 	bl	8001270 <MX_ADC1_Init>
-  MX_ADC2_Init();
+  MX_ADC2_Init(); // Khởi tạo ADC2.
  8000e6e:	f000 fa3d 	bl	80012ec <MX_ADC2_Init>
-  MX_USART1_UART_Init();
+  MX_USART1_UART_Init(); // Khởi tạo UART1.
  8000e72:	f000 fa79 	bl	8001368 <MX_USART1_UART_Init>
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-
   while (1)
   {
-	  	  strcpy((char*)data_val, "BAT001");
+    // Chuẩn bị buffer để chứa dữ liệu
+    strcpy((char*)data_val, "BAT001");
  8000e76:	4bb8      	ldr	r3, [pc, #736]	@ (8001158 <main+0x300>)
  8000e78:	4ab8      	ldr	r2, [pc, #736]	@ (800115c <main+0x304>)
  8000e7a:	e892 0003 	ldmia.w	r2, {r0, r1}
@@ -1240,72 +1240,87 @@ int main(void)
  8000e84:	3302      	adds	r3, #2
  8000e86:	0c0a      	lsrs	r2, r1, #16
  8000e88:	701a      	strb	r2, [r3, #0]
-	  	   strcpy((char*)data_temp, "");
+    strcpy((char*)data_temp, "");
  8000e8a:	4bb5      	ldr	r3, [pc, #724]	@ (8001160 <main+0x308>)
  8000e8c:	2200      	movs	r2, #0
  8000e8e:	701a      	strb	r2, [r3, #0]
-	  	   strcpy((char*)data_cap, "");
+    strcpy((char*)data_cap, "");
  8000e90:	4bb4      	ldr	r3, [pc, #720]	@ (8001164 <main+0x30c>)
  8000e92:	2200      	movs	r2, #0
  8000e94:	701a      	strb	r2, [r3, #0]
-	  	   strcpy((char*)Ccharging, "");
+    strcpy((char*)Ccharging, "");
  8000e96:	4bb4      	ldr	r3, [pc, #720]	@ (8001168 <main+0x310>)
  8000e98:	2200      	movs	r2, #0
  8000e9a:	701a      	strb	r2, [r3, #0]
-	  	   strcpy((char*)Cfull, "");
+    strcpy((char*)Cfull, "");
  8000e9c:	4bb3      	ldr	r3, [pc, #716]	@ (800116c <main+0x314>)
  8000e9e:	2200      	movs	r2, #0
  8000ea0:	701a      	strb	r2, [r3, #0]
-	  	   sum_cap = 0 ; sum_temp = 0;
+
+    // Khởi tạo lại các biến tổng
+    sum_cap = 0;
  8000ea2:	4bb3      	ldr	r3, [pc, #716]	@ (8001170 <main+0x318>)
  8000ea4:	2200      	movs	r2, #0
  8000ea6:	601a      	str	r2, [r3, #0]
+    sum_temp = 0;
  8000ea8:	4bb2      	ldr	r3, [pc, #712]	@ (8001174 <main+0x31c>)
  8000eaa:	2200      	movs	r2, #0
  8000eac:	601a      	str	r2, [r3, #0]
-	  	   for(int i = 0 ; i < 100 ; i++){
+
+    // Đọc ADC 100 lần để lấy giá trị trung bình
+    for(int i = 0; i < 100; i++) {
  8000eae:	2300      	movs	r3, #0
  8000eb0:	607b      	str	r3, [r7, #4]
  8000eb2:	e09b      	b.n	8000fec <main+0x194>
-	  		   ADC_cap =0; ADC_temp = 0;
+      ADC_cap = 0;
  8000eb4:	4bb0      	ldr	r3, [pc, #704]	@ (8001178 <main+0x320>)
  8000eb6:	2200      	movs	r2, #0
  8000eb8:	601a      	str	r2, [r3, #0]
+      ADC_temp = 0;
  8000eba:	4bb0      	ldr	r3, [pc, #704]	@ (800117c <main+0x324>)
  8000ebc:	2200      	movs	r2, #0
  8000ebe:	601a      	str	r2, [r3, #0]
-	  		   _temp = 0.0; _cap = 0;
+      _temp = 0.0;
  8000ec0:	4baf      	ldr	r3, [pc, #700]	@ (8001180 <main+0x328>)
  8000ec2:	2200      	movs	r2, #0
  8000ec4:	601a      	str	r2, [r3, #0]
+      _cap = 0;
  8000ec6:	4baf      	ldr	r3, [pc, #700]	@ (8001184 <main+0x32c>)
  8000ec8:	2200      	movs	r2, #0
  8000eca:	601a      	str	r2, [r3, #0]
-	  		 HAL_ADC_Start(&hadc1);
+
+      // Bắt đầu chuyển đổi ADC1 và ADC2
+      HAL_ADC_Start(&hadc1);
  8000ecc:	48ae      	ldr	r0, [pc, #696]	@ (8001188 <main+0x330>)
  8000ece:	f000 fd87 	bl	80019e0 <HAL_ADC_Start>
-	  		   HAL_ADC_Start(&hadc2);
+      HAL_ADC_Start(&hadc2);
  8000ed2:	48ae      	ldr	r0, [pc, #696]	@ (800118c <main+0x334>)
  8000ed4:	f000 fd84 	bl	80019e0 <HAL_ADC_Start>
-	  		  ADC_temp = HAL_ADC_GetValue(&hadc1);
+
+      // Lấy giá trị từ ADC1 và ADC2
+      ADC_temp = HAL_ADC_GetValue(&hadc1);
  8000ed8:	48ab      	ldr	r0, [pc, #684]	@ (8001188 <main+0x330>)
  8000eda:	f000 fe5b 	bl	8001b94 <HAL_ADC_GetValue>
  8000ede:	4603      	mov	r3, r0
  8000ee0:	4aa6      	ldr	r2, [pc, #664]	@ (800117c <main+0x324>)
  8000ee2:	6013      	str	r3, [r2, #0]
-	  		  ADC_cap = HAL_ADC_GetValue(&hadc2);
+      ADC_cap = HAL_ADC_GetValue(&hadc2);
  8000ee4:	48a9      	ldr	r0, [pc, #676]	@ (800118c <main+0x334>)
  8000ee6:	f000 fe55 	bl	8001b94 <HAL_ADC_GetValue>
  8000eea:	4603      	mov	r3, r0
  8000eec:	4aa2      	ldr	r2, [pc, #648]	@ (8001178 <main+0x320>)
  8000eee:	6013      	str	r3, [r2, #0]
-	  		  HAL_ADC_Stop(&hadc1);
+
+      // Dừng chuyển đổi ADC1 và ADC2
+      HAL_ADC_Stop(&hadc1);
  8000ef0:	48a5      	ldr	r0, [pc, #660]	@ (8001188 <main+0x330>)
  8000ef2:	f000 fe23 	bl	8001b3c <HAL_ADC_Stop>
-	  		HAL_ADC_Stop(&hadc2);
+      HAL_ADC_Stop(&hadc2);
  8000ef6:	48a5      	ldr	r0, [pc, #660]	@ (800118c <main+0x334>)
  8000ef8:	f000 fe20 	bl	8001b3c <HAL_ADC_Stop>
-	  		  _cap = ((((float)ADC_cap * 3.3 * 4 / 4096) - 4.2 - 3.0) / 1.2) * 100.0;
+
+      // Tính toán giá trị dung lượng và nhiệt độ pin từ giá trị ADC
+      _cap = ((((float)ADC_cap * 3.3 * 4 / 4096) - 4.2 - 3.0) / 1.2) * 100.0;
  8000efc:	4b9e      	ldr	r3, [pc, #632]	@ (8001178 <main+0x320>)
  8000efe:	681b      	ldr	r3, [r3, #0]
  8000f00:	4618      	mov	r0, r3
@@ -1366,8 +1381,7 @@ int main(void)
  8000f90:	4603      	mov	r3, r0
  8000f92:	4a7c      	ldr	r2, [pc, #496]	@ (8001184 <main+0x32c>)
  8000f94:	6013      	str	r3, [r2, #0]
-
-	  		_temp = (float)ADC_temp *75/2048;
+      _temp = (float)ADC_temp * 75 / 2048;
  8000f96:	4b79      	ldr	r3, [pc, #484]	@ (800117c <main+0x324>)
  8000f98:	681b      	ldr	r3, [r3, #0]
  8000f9a:	4618      	mov	r0, r3
@@ -1386,7 +1400,9 @@ int main(void)
  8000fbe:	4603      	mov	r3, r0
  8000fc0:	4a6f      	ldr	r2, [pc, #444]	@ (8001180 <main+0x328>)
  8000fc2:	6013      	str	r3, [r2, #0]
-	  		  sum_cap = sum_cap+ _cap ;
+
+      // Cộng dồn các giá trị để tính trung bình
+      sum_cap += _cap;
  8000fc4:	4b6a      	ldr	r3, [pc, #424]	@ (8001170 <main+0x318>)
  8000fc6:	681a      	ldr	r2, [r3, #0]
  8000fc8:	4b6e      	ldr	r3, [pc, #440]	@ (8001184 <main+0x32c>)
@@ -1394,7 +1410,7 @@ int main(void)
  8000fcc:	4413      	add	r3, r2
  8000fce:	4a68      	ldr	r2, [pc, #416]	@ (8001170 <main+0x318>)
  8000fd0:	6013      	str	r3, [r2, #0]
-	  		  sum_temp = sum_temp+_temp;
+      sum_temp += _temp;
  8000fd2:	4b68      	ldr	r3, [pc, #416]	@ (8001174 <main+0x31c>)
  8000fd4:	681a      	ldr	r2, [r3, #0]
  8000fd6:	4b6a      	ldr	r3, [pc, #424]	@ (8001180 <main+0x328>)
@@ -1402,42 +1418,50 @@ int main(void)
  8000fda:	4413      	add	r3, r2
  8000fdc:	4a65      	ldr	r2, [pc, #404]	@ (8001174 <main+0x31c>)
  8000fde:	6013      	str	r3, [r2, #0]
-	  		  HAL_Delay(10);
+
+      // Chờ một khoảng thời gian ngắn
+      HAL_Delay(10);
  8000fe0:	200a      	movs	r0, #10
  8000fe2:	f000 fc01 	bl	80017e8 <HAL_Delay>
-	  	   for(int i = 0 ; i < 100 ; i++){
+    for(int i = 0; i < 100; i++) {
  8000fe6:	687b      	ldr	r3, [r7, #4]
  8000fe8:	3301      	adds	r3, #1
  8000fea:	607b      	str	r3, [r7, #4]
  8000fec:	687b      	ldr	r3, [r7, #4]
  8000fee:	2b63      	cmp	r3, #99	@ 0x63
  8000ff0:	f77f af60 	ble.w	8000eb4 <main+0x5c>
-	  	   }
+    }
 
-	  	   charging = 0; is_full = 0;
+    // Đọc trạng thái của các chân GPIO
+    charging = 0;
  8000ff4:	4b6c      	ldr	r3, [pc, #432]	@ (80011a8 <main+0x350>)
  8000ff6:	2200      	movs	r2, #0
  8000ff8:	601a      	str	r2, [r3, #0]
+    is_full = 0;
  8000ffa:	4b6c      	ldr	r3, [pc, #432]	@ (80011ac <main+0x354>)
  8000ffc:	2200      	movs	r2, #0
  8000ffe:	601a      	str	r2, [r3, #0]
-	  	   charging = HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_1);
- 8001000:	2102      	movs	r1, #2
+
+    is_full = HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_0); // Đọc trạng thái chân GPIO_PIN_0
+ 8001000:	2101      	movs	r1, #1
  8001002:	486b      	ldr	r0, [pc, #428]	@ (80011b0 <main+0x358>)
  8001004:	f001 faa2 	bl	800254c <HAL_GPIO_ReadPin>
  8001008:	4603      	mov	r3, r0
  800100a:	461a      	mov	r2, r3
- 800100c:	4b66      	ldr	r3, [pc, #408]	@ (80011a8 <main+0x350>)
+ 800100c:	4b67      	ldr	r3, [pc, #412]	@ (80011ac <main+0x354>)
  800100e:	601a      	str	r2, [r3, #0]
-	  	   is_full = HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_2);
- 8001010:	2104      	movs	r1, #4
+    charging = HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_1); // Đọc trạng thái chân GPIO_PIN_1
+ 8001010:	2102      	movs	r1, #2
  8001012:	4867      	ldr	r0, [pc, #412]	@ (80011b0 <main+0x358>)
  8001014:	f001 fa9a 	bl	800254c <HAL_GPIO_ReadPin>
  8001018:	4603      	mov	r3, r0
  800101a:	461a      	mov	r2, r3
- 800101c:	4b63      	ldr	r3, [pc, #396]	@ (80011ac <main+0x354>)
+ 800101c:	4b62      	ldr	r3, [pc, #392]	@ (80011a8 <main+0x350>)
  800101e:	601a      	str	r2, [r3, #0]
-	  	   val_cap = sum_cap/100;
+
+
+    // Tính giá trị trung bình của dung lượng và nhiệt độ pin
+    val_cap = sum_cap / 100;
  8001020:	4b53      	ldr	r3, [pc, #332]	@ (8001170 <main+0x318>)
  8001022:	681b      	ldr	r3, [r3, #0]
  8001024:	4a63      	ldr	r2, [pc, #396]	@ (80011b4 <main+0x35c>)
@@ -1447,7 +1471,7 @@ int main(void)
  800102e:	1ad3      	subs	r3, r2, r3
  8001030:	4a61      	ldr	r2, [pc, #388]	@ (80011b8 <main+0x360>)
  8001032:	6013      	str	r3, [r2, #0]
-	  	   val_temp = sum_temp/100.0+6;
+    val_temp = sum_temp / 100.0 + 6; // Cộng thêm 6 để điều chỉnh nhiệt độ
  8001034:	4b4f      	ldr	r3, [pc, #316]	@ (8001174 <main+0x31c>)
  8001036:	681b      	ldr	r3, [r3, #0]
  8001038:	4618      	mov	r0, r3
@@ -1471,28 +1495,29 @@ int main(void)
  8001068:	4a55      	ldr	r2, [pc, #340]	@ (80011c0 <main+0x368>)
  800106a:	6013      	str	r3, [r2, #0]
 
-	  	  sprintf((char*)data_temp, "%lu", val_temp);
+    // Chuyển đổi các giá trị thành chuỗi ký tự
+    sprintf((char*)data_temp, "%lu", val_temp);
  800106c:	4b54      	ldr	r3, [pc, #336]	@ (80011c0 <main+0x368>)
  800106e:	681b      	ldr	r3, [r3, #0]
  8001070:	461a      	mov	r2, r3
  8001072:	4954      	ldr	r1, [pc, #336]	@ (80011c4 <main+0x36c>)
  8001074:	483a      	ldr	r0, [pc, #232]	@ (8001160 <main+0x308>)
  8001076:	f002 fd6b 	bl	8003b50 <siprintf>
-	  	   sprintf((char*)data_cap, "%lu", val_cap );
+    sprintf((char*)data_cap, "%lu", val_cap);
  800107a:	4b4f      	ldr	r3, [pc, #316]	@ (80011b8 <main+0x360>)
  800107c:	681b      	ldr	r3, [r3, #0]
  800107e:	461a      	mov	r2, r3
  8001080:	4950      	ldr	r1, [pc, #320]	@ (80011c4 <main+0x36c>)
  8001082:	4838      	ldr	r0, [pc, #224]	@ (8001164 <main+0x30c>)
  8001084:	f002 fd64 	bl	8003b50 <siprintf>
-	  	   sprintf((char*)Ccharging, "%lu", charging);
+    sprintf((char*)Ccharging, "%lu", charging);
  8001088:	4b47      	ldr	r3, [pc, #284]	@ (80011a8 <main+0x350>)
  800108a:	681b      	ldr	r3, [r3, #0]
  800108c:	461a      	mov	r2, r3
  800108e:	494d      	ldr	r1, [pc, #308]	@ (80011c4 <main+0x36c>)
  8001090:	4835      	ldr	r0, [pc, #212]	@ (8001168 <main+0x310>)
  8001092:	f002 fd5d 	bl	8003b50 <siprintf>
-	  	   sprintf((char*)Cfull, "%lu", is_full);
+    sprintf((char*)Cfull, "%lu", is_full);
  8001096:	4b45      	ldr	r3, [pc, #276]	@ (80011ac <main+0x354>)
  8001098:	681b      	ldr	r3, [r3, #0]
  800109a:	461a      	mov	r2, r3
@@ -1500,7 +1525,8 @@ int main(void)
  800109e:	4833      	ldr	r0, [pc, #204]	@ (800116c <main+0x314>)
  80010a0:	f002 fd56 	bl	8003b50 <siprintf>
 
-	  	   strcat((char*)data_val, " ");
+    // Ghép các chuỗi ký tự lại thành một chuỗi duy nhất
+    strcat((char*)data_val, " ");
  80010a4:	482c      	ldr	r0, [pc, #176]	@ (8001158 <main+0x300>)
  80010a6:	f7ff f853 	bl	8000150 <strlen>
  80010aa:	4603      	mov	r3, r0
@@ -1512,11 +1538,11 @@ int main(void)
  80010b6:	460b      	mov	r3, r1
  80010b8:	881b      	ldrh	r3, [r3, #0]
  80010ba:	8013      	strh	r3, [r2, #0]
-	  	   strcat((char*)data_val, (char*)data_temp);
+    strcat((char*)data_val, (char*)data_temp);
  80010bc:	4928      	ldr	r1, [pc, #160]	@ (8001160 <main+0x308>)
  80010be:	4826      	ldr	r0, [pc, #152]	@ (8001158 <main+0x300>)
  80010c0:	f002 fd6e 	bl	8003ba0 <strcat>
-	  	   strcat((char*)data_val, " ");
+    strcat((char*)data_val, " ");
  80010c4:	4824      	ldr	r0, [pc, #144]	@ (8001158 <main+0x300>)
  80010c6:	f7ff f843 	bl	8000150 <strlen>
  80010ca:	4603      	mov	r3, r0
@@ -1528,11 +1554,11 @@ int main(void)
  80010d6:	460b      	mov	r3, r1
  80010d8:	881b      	ldrh	r3, [r3, #0]
  80010da:	8013      	strh	r3, [r2, #0]
-	  	   strcat((char*)data_val, (char*)data_cap);
+    strcat((char*)data_val, (char*)data_cap);
  80010dc:	4921      	ldr	r1, [pc, #132]	@ (8001164 <main+0x30c>)
  80010de:	481e      	ldr	r0, [pc, #120]	@ (8001158 <main+0x300>)
  80010e0:	f002 fd5e 	bl	8003ba0 <strcat>
-	  	   strcat((char*)data_val, " ");
+    strcat((char*)data_val, " ");
  80010e4:	481c      	ldr	r0, [pc, #112]	@ (8001158 <main+0x300>)
  80010e6:	f7ff f833 	bl	8000150 <strlen>
  80010ea:	4603      	mov	r3, r0
@@ -1544,11 +1570,11 @@ int main(void)
  80010f6:	460b      	mov	r3, r1
  80010f8:	881b      	ldrh	r3, [r3, #0]
  80010fa:	8013      	strh	r3, [r2, #0]
-	  	   strcat((char*)data_val, (char*)Ccharging);
+    strcat((char*)data_val, (char*)Ccharging);
  80010fc:	491a      	ldr	r1, [pc, #104]	@ (8001168 <main+0x310>)
  80010fe:	4816      	ldr	r0, [pc, #88]	@ (8001158 <main+0x300>)
  8001100:	f002 fd4e 	bl	8003ba0 <strcat>
-	  	   strcat((char*)data_val, " ");
+    strcat((char*)data_val, " ");
  8001104:	4814      	ldr	r0, [pc, #80]	@ (8001158 <main+0x300>)
  8001106:	f7ff f823 	bl	8000150 <strlen>
  800110a:	4603      	mov	r3, r0
@@ -1560,12 +1586,14 @@ int main(void)
  8001116:	460b      	mov	r3, r1
  8001118:	881b      	ldrh	r3, [r3, #0]
  800111a:	8013      	strh	r3, [r2, #0]
-	  	   strcat((char*)data_val, (char*)Cfull);
+    strcat((char*)data_val, (char*)Cfull);
  800111c:	4913      	ldr	r1, [pc, #76]	@ (800116c <main+0x314>)
  800111e:	480e      	ldr	r0, [pc, #56]	@ (8001158 <main+0x300>)
  8001120:	f002 fd3e 	bl	8003ba0 <strcat>
-//	  	 strcat((char*)data_val, "\n");
-	  	  HAL_UART_Transmit(&huart1, data_val, strlen(data_val), 100);
+    // strcat((char*)data_val, "\n");
+
+    // Truyền chuỗi ký tự qua UART
+    HAL_UART_Transmit(&huart1, data_val, strlen(data_val), 100);
  8001124:	480c      	ldr	r0, [pc, #48]	@ (8001158 <main+0x300>)
  8001126:	f7ff f813 	bl	8000150 <strlen>
  800112a:	4603      	mov	r3, r0
@@ -1574,7 +1602,9 @@ int main(void)
  8001130:	4909      	ldr	r1, [pc, #36]	@ (8001158 <main+0x300>)
  8001132:	4826      	ldr	r0, [pc, #152]	@ (80011cc <main+0x374>)
  8001134:	f001 ff38 	bl	8002fa8 <HAL_UART_Transmit>
-	  	  HAL_Delay(2000);
+
+    // Chờ một khoảng thời gian trước khi lặp lại
+    HAL_Delay(2000);
  8001138:	f44f 60fa 	mov.w	r0, #2000	@ 0x7d0
  800113c:	f000 fb54 	bl	80017e8 <HAL_Delay>
   {
@@ -1607,7 +1637,7 @@ int main(void)
  80011a4:	42960000 	.word	0x42960000
  80011a8:	200001ac 	.word	0x200001ac
  80011ac:	200001b0 	.word	0x200001b0
- 80011b0:	40010800 	.word	0x40010800
+ 80011b0:	40010c00 	.word	0x40010c00
  80011b4:	51eb851f 	.word	0x51eb851f
  80011b8:	200001c4 	.word	0x200001c4
  80011bc:	40180000 	.word	0x40180000

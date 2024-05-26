@@ -75,92 +75,123 @@ int _cap, val_cap,sum_cap;
   */
 int main(void)
 {
-
   /* USER CODE BEGIN 1 */
-
+  // Đây là nơi để người dùng có thể khởi tạo các biến hoặc các cấu hình ban đầu.
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
 
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
-  HAL_Init();
+  HAL_Init(); // Khởi tạo HAL Library, reset tất cả các thiết bị ngoại vi và cấu hình hệ thống Systick.
 
   /* USER CODE BEGIN Init */
-
+  // Khởi tạo các thành phần cần thiết trước khi hệ thống chính bắt đầu.
   /* USER CODE END Init */
 
   /* Configure the system clock */
-  SystemClock_Config();
+  SystemClock_Config(); // Cấu hình clock của hệ thống.
 
   /* USER CODE BEGIN SysInit */
-
+  // Khởi tạo các thành phần của hệ thống mà cần thiết trước khi các thiết bị ngoại vi được khởi tạo.
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
-  MX_GPIO_Init();
-  MX_ADC1_Init();
-  MX_ADC2_Init();
-  MX_USART1_UART_Init();
+  MX_GPIO_Init(); // Khởi tạo các chân GPIO.
+  MX_ADC1_Init(); // Khởi tạo ADC1.
+  MX_ADC2_Init(); // Khởi tạo ADC2.
+  MX_USART1_UART_Init(); // Khởi tạo UART1.
   /* USER CODE BEGIN 2 */
-
+  // Khởi tạo các thành phần hoặc biến mà người dùng cần sử dụng sau khi tất cả các thiết bị ngoại vi đã được khởi tạo.
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-
   while (1)
   {
-	  	  strcpy((char*)data_val, "BAT001");
-	  	   strcpy((char*)data_temp, "");
-	  	   strcpy((char*)data_cap, "");
-	  	   strcpy((char*)Ccharging, "");
-	  	   strcpy((char*)Cfull, "");
-	  	   sum_cap = 0 ; sum_temp = 0;
-	  	   for(int i = 0 ; i < 100 ; i++){
-	  		   ADC_cap =0; ADC_temp = 0;
-	  		   _temp = 0.0; _cap = 0;
-	  		 HAL_ADC_Start(&hadc1);
-	  		   HAL_ADC_Start(&hadc2);
-	  		  ADC_temp = HAL_ADC_GetValue(&hadc1);
-	  		  ADC_cap = HAL_ADC_GetValue(&hadc2);
-	  		  HAL_ADC_Stop(&hadc1);
-	  		HAL_ADC_Stop(&hadc2);
-	  		  _cap = ((((float)ADC_cap * 3.3 * 4 / 4096) - 4.2 - 3.0) / 1.2) * 100.0;
+    // Chuẩn bị buffer để chứa dữ liệu
+    strcpy((char*)data_val, "BAT001");
+    strcpy((char*)data_temp, "");
+    strcpy((char*)data_cap, "");
+    strcpy((char*)Ccharging, "");
+    strcpy((char*)Cfull, "");
 
-	  		_temp = (float)ADC_temp *75/2048;
-	  		  sum_cap = sum_cap+ _cap ;
-	  		  sum_temp = sum_temp+_temp;
-	  		  HAL_Delay(10);
-	  	   }
+    // Khởi tạo lại các biến tổng
+    sum_cap = 0;
+    sum_temp = 0;
 
-	  	   charging = 0; is_full = 0;
-	  	   charging = HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_1);
-	  	   is_full = HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_2);
-	  	   val_cap = sum_cap/100;
-	  	   val_temp = sum_temp/100.0+6;
+    // Đọc ADC 100 lần để lấy giá trị trung bình
+    for(int i = 0; i < 100; i++) {
+      ADC_cap = 0;
+      ADC_temp = 0;
+      _temp = 0.0;
+      _cap = 0;
 
-	  	  sprintf((char*)data_temp, "%lu", val_temp);
-	  	   sprintf((char*)data_cap, "%lu", val_cap );
-	  	   sprintf((char*)Ccharging, "%lu", charging);
-	  	   sprintf((char*)Cfull, "%lu", is_full);
+      // Bắt đầu chuyển đổi ADC1 và ADC2
+      HAL_ADC_Start(&hadc1);
+      HAL_ADC_Start(&hadc2);
 
-	  	   strcat((char*)data_val, " ");
-	  	   strcat((char*)data_val, (char*)data_temp);
-	  	   strcat((char*)data_val, " ");
-	  	   strcat((char*)data_val, (char*)data_cap);
-	  	   strcat((char*)data_val, " ");
-	  	   strcat((char*)data_val, (char*)Ccharging);
-	  	   strcat((char*)data_val, " ");
-	  	   strcat((char*)data_val, (char*)Cfull);
-//	  	 strcat((char*)data_val, "\n");
-	  	  HAL_UART_Transmit(&huart1, data_val, strlen(data_val), 100);
-	  	  HAL_Delay(2000);
+      // Lấy giá trị từ ADC1 và ADC2
+      ADC_temp = HAL_ADC_GetValue(&hadc1);
+      ADC_cap = HAL_ADC_GetValue(&hadc2);
+
+      // Dừng chuyển đổi ADC1 và ADC2
+      HAL_ADC_Stop(&hadc1);
+      HAL_ADC_Stop(&hadc2);
+
+      // Tính toán giá trị dung lượng và nhiệt độ pin từ giá trị ADC
+      _cap = ((((float)ADC_cap * 3.3 * 4 / 4096) - 4.2 - 3.0) / 1.2) * 100.0;
+      _temp = (float)ADC_temp * 75 / 2048;
+
+      // Cộng dồn các giá trị để tính trung bình
+      sum_cap += _cap;
+      sum_temp += _temp;
+
+      // Chờ một khoảng thời gian ngắn
+      HAL_Delay(10);
+    }
+
+    // Đọc trạng thái của các chân GPIO
+    charging = 0;
+    is_full = 0;
+
+    is_full = HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_0); // Đọc trạng thái chân GPIO_PIN_0
+    charging = HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_1); // Đọc trạng thái chân GPIO_PIN_1
+
+
+    // Tính giá trị trung bình của dung lượng và nhiệt độ pin
+    val_cap = sum_cap / 100;
+    val_temp = sum_temp / 100.0 + 6; // Cộng thêm 6 để điều chỉnh nhiệt độ
+
+    // Chuyển đổi các giá trị thành chuỗi ký tự
+    sprintf((char*)data_temp, "%lu", val_temp);
+    sprintf((char*)data_cap, "%lu", val_cap);
+    sprintf((char*)Ccharging, "%lu", charging);
+    sprintf((char*)Cfull, "%lu", is_full);
+
+    // Ghép các chuỗi ký tự lại thành một chuỗi duy nhất
+    strcat((char*)data_val, " ");
+    strcat((char*)data_val, (char*)data_temp);
+    strcat((char*)data_val, " ");
+    strcat((char*)data_val, (char*)data_cap);
+    strcat((char*)data_val, " ");
+    strcat((char*)data_val, (char*)Ccharging);
+    strcat((char*)data_val, " ");
+    strcat((char*)data_val, (char*)Cfull);
+    // strcat((char*)data_val, "\n");
+
+    // Truyền chuỗi ký tự qua UART
+    HAL_UART_Transmit(&huart1, data_val, strlen(data_val), 100);
+
+    // Chờ một khoảng thời gian trước khi lặp lại
+    HAL_Delay(2000);
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
 }
+
 
 /**
   * @brief System Clock Configuration
